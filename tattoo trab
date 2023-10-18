@@ -1,0 +1,194 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ */
+
+package com.mycompany.trabalhojava3n;
+
+/**
+ *
+ * @author LabJF
+ */
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Cliente {
+    private String nome;
+    private String tattoo;
+    private String dataAgendamento;
+
+    public Cliente(String nome, String tattoo, String dataAgendamento) {
+        this.nome = nome;
+        this.tattoo = tattoo;
+        this.dataAgendamento = dataAgendamento;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getTattoo() {
+        return tattoo;
+    }
+
+    public String getDataAgendamento() {
+        return dataAgendamento;
+    }
+}
+
+class Tatuagem {
+    private String desenho;
+
+    public Tatuagem(String desenho) {
+        this.desenho = desenho;
+    }
+
+    public String getDesenho() {
+        return desenho;
+    }
+}
+
+class TatuagemSystem {
+    private ArrayList<Cliente> clientes = new ArrayList<>();
+    private ArrayList<Tatuagem> tatuagens = new ArrayList<>();
+    private ArrayList<String> horarios = new ArrayList<>();
+    public boolean isTatuador;
+
+    public void login(String tipoAcesso) {
+        if (tipoAcesso.equals("tatuador")) {
+            isTatuador = true;
+            System.out.println("Login de Tatuador efetuado.");
+        } else if (tipoAcesso.equals("atendente")) {
+            isTatuador = false;
+            System.out.println("Login de Atendente efetuado.");
+        } else {
+            System.out.println("Tipo de acesso inválido.");
+        }
+    }
+
+    public void adicionarCliente(String nome, String tattoo, String dataAgendamento) {
+        Cliente cliente = new Cliente(nome, tattoo, dataAgendamento);
+        clientes.add(cliente);
+        System.out.println("Cliente adicionado com sucesso.");
+    }
+
+    public void listarClientesAgendados() {
+        System.out.println("Clientes Agendados:");
+        for (Cliente cliente : clientes) {
+            System.out.println("Nome: " + cliente.getNome());
+            System.out.println("Tattoo: " + cliente.getTattoo());
+            System.out.println("Data de Agendamento: " + cliente.getDataAgendamento());
+            System.out.println("---------------------------");
+        }
+    }
+
+    public void adicionarTatuagem(String desenho) {
+        Tatuagem tatuagem = new Tatuagem(desenho);
+        tatuagens.add(tatuagem);
+        System.out.println("Tatuagem adicionada com sucesso.");
+    }
+
+    public void listarTatuagensDisponiveis() {
+        System.out.println("Tatuagens Disponíveis:");
+        for (Tatuagem tatuagem : tatuagens) {
+            System.out.println("Desenho: " + tatuagem.getDesenho());
+            System.out.println("---------------------------");
+        }
+    }
+
+    public void agendarSessao(String horario) {
+        if (!isTatuador) {
+            if (horarios.contains(horario)) {
+                System.out.println("Horário indisponível.");
+            } else {
+                horarios.add(horario);
+                System.out.println("Sessão agendada para o horário: " + horario);
+            }
+        } else {
+            System.out.println("Apenas atendentes podem agendar sessões.");
+        }
+    }
+
+    public void fazerOrcamento() {
+        if (isTatuador) {
+            System.out.println("Orçamento realizado pelo tatuador.");
+        } else {
+            System.out.println("Apenas tatuadores podem fazer orçamentos.");
+        }
+    }
+}
+
+public class TrabalhoJava3n {
+    public static void main(String[] args) {
+        TatuagemSystem sistema = new TatuagemSystem();
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Digite o tipo de acesso (tatuador ou atendente):");
+        String tipoAcesso = scanner.nextLine().toLowerCase();
+        sistema.login(tipoAcesso);
+
+        while (true) {
+            System.out.println("Escolha uma opção:");
+            System.out.println("1. Adicionar cliente");
+            System.out.println("2. Listar clientes agendados");
+            System.out.println("3. Adicionar tatuagem");
+            System.out.println("4. Listar tatuagens disponíveis");
+            System.out.println("5. Agendar sessão");
+            System.out.println("6. Fazer orçamento");
+            System.out.println("7. Sair");
+
+            int escolha = scanner.nextInt();
+            scanner.nextLine(); // Limpar o buffer
+
+            switch (escolha) {
+                case 1:
+                    if (!sistema.isTatuador) {
+                        System.out.println("Digite o nome do cliente:");
+                        String nome = scanner.nextLine();
+                        System.out.println("Digite a tattoo desejada:");
+                        String tattoo = scanner.nextLine();
+                        System.out.println("Digite a data de agendamento:");
+                        String dataAgendamento = scanner.nextLine();
+                        sistema.adicionarCliente(nome, tattoo, dataAgendamento);
+                    } else {
+                        System.out.println("Apenas atendentes podem adicionar clientes.");
+                    }
+                    break;
+                case 2:
+                    sistema.listarClientesAgendados();
+                    break;
+                case 3:
+                    if (!sistema.isTatuador) {
+                        System.out.println("Digite o desenho da tatuagem:");
+                        String desenho = scanner.nextLine();
+                        sistema.adicionarTatuagem(desenho);
+                    } else {
+                        System.out.println("Apenas atendentes podem adicionar tatuagens.");
+                    }
+                    break;
+                case 4:
+                    sistema.listarTatuagensDisponiveis();
+                    break;
+                case 5:
+                    if (sistema.isTatuador) {
+                        System.out.println("Digite o horário da sessão:");
+                        String horario = scanner.nextLine();
+                        sistema.agendarSessao(horario);
+                    } else {
+                        System.out.println("Apenas atendentes podem agendar sessões.");
+                    }
+                    break;
+                case 6:
+                    sistema.fazerOrcamento();
+                    break;
+                case 7:
+                    System.out.println("Saindo do sistema. Até logo!");
+                    scanner.close();
+                    System.exit(0);
+                default:
+                    System.out.println("Opção inválida. Tente novamente.");
+                    break;
+            }
+        }
+    }
+}
