@@ -192,3 +192,100 @@ public class TrabalhoJava3n {
         }
     }
 }
+
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ */
+package com.mycompany.trab_tattoo;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+class Cliente {
+    private String nome;
+    private String tattoo;
+    private String dataAgendamento;
+
+    public Cliente(String nome, String tattoo, String dataAgendamento) {
+        this.nome = nome;
+        this.tattoo = tattoo;
+        this.dataAgendamento = dataAgendamento;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getTattoo() {
+        return tattoo;
+    }
+
+    public String getDataAgendamento() {
+        return dataAgendamento;
+    }
+}
+
+class TatuagemSystem {
+    private Connection conexao;
+    private boolean isTatuador;
+
+    public TatuagemSystem() {
+        // Inicialize a conexão com o banco de dados no construtor
+        try {
+            conexao = DriverManager.getConnection("jdbc:mysql://localhost:3306/trab_tattoo", "root", "");
+        } catch (SQLException e) {
+            System.err.println("Erro na conexão com o banco de dados: " + e.getMessage());
+        }
+    }
+
+    public void login(String tipoAcesso) {
+        if (tipoAcesso.equals("tatuador")) {
+            isTatuador = true;
+            System.out.println("Login de Tatuador efetuado.");
+        } else if (tipoAcesso.equals("atendente")) {
+            isTatuador = false;
+            System.out.println("Login de Atendente efetuado.");
+        } else {
+            System.out.println("Tipo de acesso inválido.");
+        }
+    }
+
+    public void adicionarCliente(String nome, String tattoo, String dataAgendamento) {
+        if (!isTatuador) {
+            try {
+                Statement stmt = conexao.createStatement();
+                String sql = "INSERT INTO clientes (nome, tattoo, data_agendamento) VALUES ('" + nome + "', '" + tattoo + "', '" + dataAgendamento + "')";
+                stmt.executeUpdate(sql);
+                System.out.println("Cliente adicionado com sucesso.");
+            } catch (SQLException e) {
+                System.err.println("Erro ao adicionar cliente: " + e.getMessage());
+            }
+        } else {
+            System.out.println("Apenas atendentes podem adicionar clientes.");
+        }
+    }
+
+    // Resto do código
+}
+
+public class trab_tattoo {
+    public static void main(String[] args) {
+        TatuagemSystem sistema = new TatuagemSystem();
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Digite o tipo de acesso (tatuador ou atendente):");
+        String tipoAcesso = scanner.nextLine().toLowerCase();
+        sistema.login(tipoAcesso);
+
+        while (true) {
+            System.out.println("Escolha uma opção:");
+            System.out.println("1. Adicionar cliente");
+            // Resto das opções
+        }
+    }
+}
+
